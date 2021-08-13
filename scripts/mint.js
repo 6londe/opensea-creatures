@@ -7,7 +7,8 @@ const FACTORY_CONTRACT_ADDRESS = process.env.FACTORY_CONTRACT_ADDRESS;
 const NFT_CONTRACT_ADDRESS = process.env.NFT_CONTRACT_ADDRESS;
 const OWNER_ADDRESS = process.env.OWNER_ADDRESS;
 const NETWORK = process.env.NETWORK;
-const NUM_CREATURES = 12;
+// const NUM_CREATURES = 12;
+const NUM_CREATURES = 1;
 const NUM_LOOTBOXES = 4;
 const DEFAULT_OPTION_ID = 0;
 const LOOTBOX_OPTION_ID = 2;
@@ -27,6 +28,12 @@ const NFT_ABI = [
         name: "_to",
         type: "address",
       },
+      //
+      {
+        name: "message",
+        type: "string",
+      },
+      //
     ],
     name: "mintTo",
     outputs: [],
@@ -68,7 +75,8 @@ async function main() {
   );
   const web3Instance = new web3(provider);
 
-  if (FACTORY_CONTRACT_ADDRESS) {
+  // if (FACTORY_CONTRACT_ADDRESS) {
+  if (false) {
     const factoryContract = new web3Instance.eth.Contract(
       FACTORY_ABI,
       FACTORY_CONTRACT_ADDRESS,
@@ -98,11 +106,18 @@ async function main() {
     );
 
     // Creatures issued directly to the owner.
+
+    // const mintTo = OWNER_ADDRESS;
+    const mintTo = "0xD9A6d1a6855E79122E153024747f9494F1f3cA03";
     for (var i = 0; i < NUM_CREATURES; i++) {
       const result = await nftContract.methods
-        .mintTo(OWNER_ADDRESS)
+        // .mintTo(mintTo)
+        .mintTo(mintTo, '0xthisisgnfttestimagehash')
         .send({ from: OWNER_ADDRESS });
-      console.log("Minted creature. Transaction: " + result.transactionHash);
+      console.log(`tx: ${result.transactionHash}`);
+      console.log(`mintTo: ${mintTo}`);
+      console.log(`from: ${OWNER_ADDRESS}`);
+      console.log(result);
     }
   } else {
     console.error(
